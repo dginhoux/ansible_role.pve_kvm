@@ -1,0 +1,55 @@
+---
+
+- name: Set kvm list
+  when:
+    - pve_kvm_list is defined
+    - pve_kvm_list is iterable
+    - pve_kvm_limit_list is not defined or pve_kvm_limit_list | length == 0
+  ansible.builtin.set_fact:
+    pve_kvm_list2: "{{ pve_kvm_list }}"
+
+
+- name: Set new kvm list with selected list
+  when:
+    - pve_kvm_list is defined
+    - pve_kvm_list is iterable
+    - pve_kvm_limit_list is defined
+    - pve_kvm_limit_list | length > 0
+  block:
+    - name: Set new (empty) kvm list with selected list
+      ansible.builtin.set_fact:
+        pve_kvm_list2: []
+    - name: Set new kvm list with selected list
+      when:
+        - kvm.name in pve_kvm_limit_list
+      loop: "{{ pve_kvm_list | flatten }}"
+      loop_control:
+        loop_var: kvm
+        label: "kvm: {{ kvm.name }}"
+      ansible.builtin.set_fact:
+        pve_kvm_list2: "{{ pve_kvm_list2 + [ kvm ] }}"
+
+
+- name: Set action to the global specified
+  when:
+    - pve_kvm_force_action is defined
+    - pve_kvm_force_action is in "create, remove, poweron, poweroff, update, clone"
+  ansible.builtin.set_fact:
+    pve_kvm_list2: "{{ pve_kvm_list2 | map('combine', {'action': pve_kvm_force_action }) }}"
+
+
+- name: Launch kvm action tasks
+  run_once: true
+  tags:
+    - action
+  when:
+    - pve_kvm_list2 is defined
+    - pve_kvm_list2 is iterable
+    - kvm.action is defined
+    - kvm.action is in "create, remove, poweron, poweroff, update, clone"
+  loop: "{{ pve_kvm_list2 | flatten }}"
+  loop_control:
+    loop_var: kvm
+    label: "kvm: {{ kvm.name }}, action: {{ kvm.action }}"
+  ansible.builtin.include_tasks:
+    file: "sub-tasks/kvm_{{ kvm.action }}.yml"

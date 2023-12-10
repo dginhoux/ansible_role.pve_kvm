@@ -1,0 +1,122 @@
+---
+- name: Install dependencies
+  tags:
+    - dependencies
+  when:
+    - pve_kvm_apt_dependencies_install | bool
+    - pve_kvm_apt_dependencies_list is defined
+    - pve_kvm_apt_dependencies_list is iterable
+  ansible.builtin.include_tasks:
+    file: sub-tasks/dependencies.yml
+
+
+# - name: Get kvm vmid
+#   ansible.builtin.include_tasks:
+#     file: sub-tasks/kvm_get_vmid.yml
+
+
+- name: Create qemu kvm {{ kvm.name }}
+  # when:
+  #   - vmid is defined
+  #   - vmid | int
+  delegate_to: "{{ kvm.api_host }}" 
+  ignore_errors: true
+  community.general.proxmox_kvm:
+    node: "{{ kvm.node }}"
+    api_host: "{{ kvm.api_host }}"
+    api_user: "{{ kvm.api_user | default(pve_kvm_global_api_user) | default(omit) }}"
+    api_password: "{{ kvm.api_password | default(pve_kvm_global_api_password) | default(omit) }}"
+    api_token_id: "{{ kvm.api_token_id | default(pve_kvm_global_api_token_id) | default(omit) }}"
+    api_token_secret: "{{ kvm.api_token_secret | default(pve_kvm_global_api_token_secret) | default(omit) }}"
+    validate_certs: "{{ kvm.validate_certs | default(pve_kvm_global_validate_certs) | default(omit) }}"
+    timeout: "{{ kvm.timeout | default(pve_kvm_global_timeout) | default(omit) }}"
+    vmid: "{{ kvm.vmid | default(omit) }}"
+    state: present
+    # force: true
+    update: false
+
+    proxmox_default_behavior: "{{ pve_default_behavior | default(pve_kvm_global_default_behavior) | default('compatibility') }}"
+    name: "{{ kvm.name }}"
+
+    acpi: "{{ kvm.acpi | default(omit) }}"
+    agent: "{{ kvm.agent | default(omit) }}"
+    args: "{{ kvm.args | default(omit) }}"
+    autostart: "{{ kvm.autostart | default(omit) }}"
+    balloon: "{{ kvm.balloon | default(omit) }}"
+    bios: "{{ kvm.bios | default(omit) }}"
+    boot: "{{ kvm.boot | default(omit) }}"
+    bootdisk: "{{ kvm.bootdisk | default(omit) }}"
+    citype: "{{ kvm.citype | default(omit) }}"
+    cicustom: "{{ kvm.cicustom | default(omit) }}"
+    ciuser: "{{ kvm.ciuser | default(omit) }}"
+    cipassword: "{{ kvm.cipassword | default(omit) }}"
+    cores: "{{ kvm.cores | default(omit) }}"
+    cpu: "{{ kvm.cpu | default(omit) }}"
+    cpuunits: "{{ kvm.cpuunits | default(omit) }}"
+    cpulimit: "{{ kvm.cpulimit | default(omit) }}"
+    description: "{{ kvm.description | default(omit) }}"
+    delete: "{{ kvm.delete | default(omit) }}"
+    digest: "{{ kvm.digest | default(omit) }}"
+    force: "{{ kvm.force | default(omit) }}"
+    freeze: "{{ kvm.freeze | default(omit) }}"
+    hostpci: "{{ kvm.hostpci | default(omit) }}"
+    hotplug: "{{ kvm.hotplug | default(omit) }}"
+    hugepages: "{{ kvm.hugepages | default(omit) }}"
+    ide: "{{ kvm.ide | default(omit) }}"
+    ipconfig: "{{ kvm.ipconfig | default(omit) }}"
+    keyboard: "{{ kvm.keyboard | default(omit) }}"
+    kvm: "{{ kvm.kvm | default(omit) }}"
+    localtime: "{{ kvm.localtime | default(omit) }}"
+    lock: "{{ kvm.lock | default(omit) }}"
+    machine: "{{ kvm.machine | default(omit) }}"
+    memory: "{{ kvm.memory | default(omit) }}"
+    migrate_downtime: "{{ kvm.migrate_downtime | default(omit) }}"
+    migrate_speed: "{{ kvm.migrate_speed | default(omit) }}"
+    nameservers: "{{ kvm.nameservers | default(omit) }}"
+    numa: "{{ kvm.numa | default(omit) }}"
+    numa_enabled: "{{ kvm.numa_enabled | default(omit) }}"
+    onboot: "{{ kvm.onboot | default(omit) }}"
+    ostype: "{{ kvm.ostype | default(omit) }}"
+    parallel: "{{ kvm.parallel | default(omit) }}"
+    pool: "{{ kvm.pool | default(omit) }}"
+    protection: "{{ kvm.protection | default(omit) }}"
+    reboot: "{{ kvm.reboot | default(omit) }}"
+    revert: "{{ kvm.revert | default(omit) }}"
+    sata: "{{ kvm.sata | default(omit) }}"
+    scsi: "{{ kvm.scsi | default(omit) }}"
+    scsihw: "{{ kvm.scsihw | default(omit) }}"
+    searchdomains: "{{ kvm.searchdomains | default(omit) }}"
+    serial: "{{ kvm.serial | default(omit) }}"
+    shares: "{{ kvm.shares | default(omit) }}"
+    skiplock: "{{ kvm.skiplock | default(omit) }}"
+    smbios: "{{ kvm.smbios | default(omit) }}"
+    sshkeys: "{{ kvm.sshkeys | default(omit) }}"
+    startdate: "{{ kvm.startdate | default(omit) }}"
+    startup: "{{ kvm.startup | default(omit) }}"
+    sockets: "{{ kvm.sockets | default(omit) }}"
+    tablet: "{{ kvm.tablet | default(omit) }}"
+    tags: "{{ kvm.tags | default(omit) }}"
+    tdf: "{{ kvm.tdf | default(omit) }}"
+    template: "{{ kvm.template | default(omit) }}"
+    # update: "{{ kvm.update | default(omit) }}"
+    vcpus: "{{ kvm.vcpus | default(omit) }}"
+    vga: "{{ kvm.vga | default(omit) }}"
+    watchdog: "{{ kvm.watchdog | default(omit) }}"
+
+    virtio: >-
+      {   {%- for item in kvm.hard_disks_list -%}
+            "{{ item.bus }}{{ item.id }}":"{{ item.storage }}:{{ item.size }},{% if item.format is defined %}format={{ item.format }},{% endif %}{% if item.media is defined %}media={{ item.media }},{% endif %}{% if (item.backup is defined and not item.backup) %}backup=0,{% endif %}{% if (item.skip_replication is defined and item.skip_replication) %}replicate=0,{% endif %}{% if item.cache is defined %}cache={{ item.cache }},{% endif %}{% if (item.io_thread is defined and item.io_thread) %}iothread=1,{% endif %}{% if (item.ssd_emulation is defined and item.ssd_emulation) %}ssd=1{% endif %}",
+          {%- endfor -%}  }
+
+    net: >-
+      {   {%- for item in kvm.net_interfaces_list -%}
+            "{{ item.id }}":"{% if item.model is defined %}{{ item.model }}{% else %}virtio{% endif %}{% if item.hwaddr is defined %}={{ item.hwaddr }}{% endif %},bridge={{ item.bridge }},{% if (item.firewall is defined and item.firewall) %}firewall=1,{% endif %}{% if (item.disconnect is defined and item.disconnect) %}link_down=1,{% endif %}{% if item.multiqueue is defined %}queues={{ item.multiqueue }},{% endif %}{% if item.rate_limit is defined %}rate={{ item.rate_limit }},{% endif %}{% if item.vlan_tag is defined %}tag={{ item.vlan_tag }}{% endif %}",
+          {%- endfor -%}  }
+
+
+- name: Create cloudinit snippet
+  when:
+    - kvm.snippet is defined
+    - kvm.snippet != ""
+  ansible.builtin.include_tasks:
+    file: sub-tasks/kvm_set_cloudinit.yml

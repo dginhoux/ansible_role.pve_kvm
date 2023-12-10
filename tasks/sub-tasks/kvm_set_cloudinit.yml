@@ -1,0 +1,12 @@
+---
+
+- name: Create snippet file
+  delegate_to: "{{ kvm.api_host }}" 
+  ansible.builtin.copy:
+    dest: "{{ pve_kvm_global_cloudinit_snippet_path }}/{{ kvm.name }}.yml"
+    content: |
+      # Ansible managed
+      {{ kvm.snippet }}
+    owner: root
+    group: root
+    mode: "0644"

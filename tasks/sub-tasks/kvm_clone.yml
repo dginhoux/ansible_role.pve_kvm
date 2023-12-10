@@ -1,0 +1,52 @@
+---
+- name: Install dependencies
+  tags:
+    - dependencies
+  when:
+    - pve_kvm_apt_dependencies_install | bool
+    - pve_kvm_apt_dependencies_list is defined
+    - pve_kvm_apt_dependencies_list is iterable
+  ansible.builtin.include_tasks:
+    file: sub-tasks/dependencies.yml
+
+
+# - name: Get kvm vmid
+#   ansible.builtin.include_tasks:
+#     file: sub-tasks/kvm_get_vmid.yml
+
+
+- name: "Clone qemu kvm {{ kvm.name }}"
+  when:
+    - kvm.vmid is defined
+    - kvm.vmid | int
+  delegate_to: "{{ kvm.api_host }}"
+  ignore_errors: true
+  community.general.proxmox_kvm:
+    node: "{{ kvm.node }}"
+    api_host: "{{ kvm.api_host }}"
+    api_user: "{{ kvm.api_user | default(pve_kvm_global_api_user) | default(omit) }}"
+    api_password: "{{ kvm.api_password | default(pve_kvm_global_api_password) | default(omit) }}"
+    api_token_id: "{{ kvm.api_token_id | default(pve_kvm_global_api_token_id) | default(omit) }}"
+    api_token_secret: "{{ kvm.api_token_secret | default(pve_kvm_global_api_token_secret) | default(omit) }}"
+    validate_certs: "{{ kvm.validate_certs | default(pve_kvm_global_validate_certs) | default(omit) }}"
+    timeout: "{{ kvm.timeout | default(pve_kvm_global_timeout) | default(omit) }}"
+    # vmid: "{{ vmid }}"
+    # state: stopped
+    # force: true
+
+    proxmox_default_behavior: "{{ pve_default_behavior | default(pve_kvm_global_default_behavior) | default('compatibility') }}"
+
+    name: "{{ kvm.name }}"
+    vmid: "{{ kvm.src_vmid }}"
+    newid: "{{ kvm.vmid | default(omit) }}"
+    full: "{{ kvm.full_clone | default(omit) }}"
+    clone: "{{ kvm.src_name | default(omit) }}"
+    snapname: "{{ kvm.src_snapname | default(omit) }}"
+    storage: "{{ kvm.storage | default(omit) }}"
+    format: "{{ kvm.format | default(omit) }}"
+    target: "{{ kvm.target | default(omit) }}"
+
+
+- name: "Update clone {{ kvm.name }}"
+  ansible.builtin.include_tasks:
+    file: sub-tasks/kvm_update.yml

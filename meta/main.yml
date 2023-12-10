@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  role_name: pve_kvm
+  description: |
+    This ansible role manage pve kvm instances.
+  author: Dany GINHOUX
+  company: dginhoux
+  license: MIT
+  min_ansible_version: "2.13"
+  platforms:
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - pve
+    - kvm
+    - qemu
+    - proxmox
+
+dependencies: []

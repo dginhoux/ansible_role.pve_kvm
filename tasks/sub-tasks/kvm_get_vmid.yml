@@ -1,0 +1,36 @@
+---
+- name: Extract kvm vmid {{ kvm.name }}
+  delegate_to: "{{ kvm.api_host }}"
+  when:
+    - kvm.vmid is not defined
+  block:
+    - name: Extract kvm vmid {{ kvm.name }}
+      # delegate_to: "{{ kvm.api_host }}"
+      changed_when: false
+      register: pve_kvm_extracted_vmid
+      ansible.builtin.shell: |
+        set -o pipefail
+        qm list | grep -w "{{ kvm.name }}" | awk '{ print $1 }'
+      args:
+        executable: /bin/bash
+
+    - name: Set kvm vmid
+      # delegate_to: "{{ kvm.api_host }}"
+      when:
+        - pve_kvm_extracted_vmid.stdout is defined
+        - pve_kvm_extracted_vmid.stdout | int
+      ansible.builtin.set_fact:
+        # kvm: "{{ kvm | dict | combine ({ 'vmid' : pve_kvm_extracted_vmid.stdout }) }}"
+        # kvm: "{{ kvm | combine( { 'vmid': pve_kvm_extracted_vmid.stdout } ) }}"
+        # kvm: "{{ kvm + { 'vmid': pve_kvm_extracted_vmid.stdout } }}"
+        vmid: "{{ pve_kvm_extracted_vmid.stdout }}"
+
+
+- name: Set kvm vmid {{ kvm.name }}
+  # delegate_to: "{{ kvm.api_host }}"
+  when:
+    - kvm.vmid is defined
+    - kvm.vmid | int
+  ansible.builtin.set_fact:
+    vmid: "{{ kvm.vmid }}"
+

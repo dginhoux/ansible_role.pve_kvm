@@ -1,0 +1,9 @@
+---
+
+- name: Install apt dependencies
+  delegate_to: "{{ kvm.api_host }}" 
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ pve_kvm_apt_dependencies_list | flatten }}"
+ 
