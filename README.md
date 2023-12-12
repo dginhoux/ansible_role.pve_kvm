@@ -75,7 +75,7 @@ git clone https://github.com/dginhoux/ansible_role.pve dginhoux.pve_kvm
         name: dginhoux.pve_pve
   vars:
     pve_kvm_force_action: poweron
-
+```
 
 #### EXAMPLE PLAYBOOK UPDATE ONLY ONE (vm2) KVM INSTANCE
 
@@ -111,7 +111,7 @@ One of theses is loaded dynamically during role runtime using the `include_vars`
 
 ## AUTHOR
 
-Dany GINHOUX - https://github.com/dginhoux
+Dany GINHOUX - https://github.com/dginhoux<br />
 Some parts are inspired from this existing role : https://github.com/UdelaRInterior/ansible-role-proxmox-create-kvm
 
 
