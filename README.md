@@ -4,8 +4,11 @@
 
 ## DESCRIPTION
 
-This ansible role manage pve kvm instances.
-
+This ansible role manage pve kvm instances.<br />
+Each kvm instances must be registered on "main list" (see vars sections).
+<br /><br />
+Actions possible are : create, delete, update, poweron, poweroff and clone.<br />
+This role can be easily called for interact on just ONE instance and made ONE action. 
 
 ## REQUIREMENTS
 
