@@ -27,7 +27,7 @@
         loop_var: kvm
         label: "kvm: {{ kvm.name }}"
       ansible.builtin.set_fact:
-        pve_kvm_list2: "{{ pve_kvm_list2 + [ kvm ] }}"
+        pve_kvm_list2: "{{ pve_kvm_list2 + [kvm] }}"
 
 
 - name: Set action to the global specified
