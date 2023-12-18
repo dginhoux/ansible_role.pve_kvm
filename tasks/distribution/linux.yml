@@ -35,7 +35,7 @@
     - pve_kvm_force_action is defined
     - pve_kvm_force_action is in "create, remove, poweron, poweroff, update, clone"
   ansible.builtin.set_fact:
-    pve_kvm_list2: "{{ pve_kvm_list2 | map('combine', {'action': pve_kvm_force_action }) }}"
+    pve_kvm_list2: "{{ pve_kvm_list2 | map('combine', {'action': pve_kvm_force_action}) }}"
 
 
 - name: Launch kvm action tasks

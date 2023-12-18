@@ -15,7 +15,7 @@
 
 ## MAIN LIST : pve_kvm_list
 # The var "pve_kvm_list" must contains all kvm instance with all their specifications
-# Mandatory fields for each instance are : 
+# Mandatory fields for each instance are :
 #    name:      > instance name
 #    vmid:      > OPTIONNAL it can be automatically set or found by this role if not set here
 #    node:      > pve server where is this instance
@@ -44,7 +44,7 @@
 #       ansible.builtin.include_role:
 #         name: dginhoux.pve_kvm
 
-## These vars are optionals and must be used in playbooks to : 
+## These vars are optionals and must be used in playbooks to :
 # - limit action for certains instance
 #     pve_kvm_limit_list: []
 #     pve_kvm_limit_list:
@@ -89,7 +89,7 @@ pve_kvm_list:
     # api_password:
     # api_token_id:
     # api_token_secret:
-    # pve_default_behavior: 
+    # pve_default_behavior:
     onboot: true
     boot: ndc
     bootdisk: scsi0

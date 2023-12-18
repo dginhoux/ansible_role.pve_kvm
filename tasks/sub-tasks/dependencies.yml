@@ -1,7 +1,7 @@
 ---
 
 - name: Install apt dependencies
-  delegate_to: "{{ kvm.api_host }}" 
+  delegate_to: "{{ kvm.api_host }}"
   ansible.builtin.apt:
     name: "{{ item }}"
     state: present

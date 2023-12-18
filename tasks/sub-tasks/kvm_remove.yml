@@ -19,7 +19,7 @@
   when:
     - vmid is defined
     - vmid | int
-  delegate_to: "{{ kvm.api_host }}" 
+  delegate_to: "{{ kvm.api_host }}"
   ignore_errors: true
   community.general.proxmox_kvm:
     node: "{{ kvm.node }}"
@@ -33,4 +33,3 @@
     vmid: "{{ vmid }}"
     state: absent
     force: true
- 

@@ -33,4 +33,3 @@
     - kvm.vmid | int
   ansible.builtin.set_fact:
     vmid: "{{ kvm.vmid }}"
-

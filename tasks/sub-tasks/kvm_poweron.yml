@@ -19,7 +19,7 @@
   when:
     - vmid is defined
     - vmid | int
-  delegate_to: "{{ kvm.api_host }}" 
+  delegate_to: "{{ kvm.api_host }}"
   ignore_errors: true
   community.general.proxmox_kvm:
     node: "{{ kvm.node }}"
@@ -32,4 +32,3 @@
     timeout: "{{ kvm.timeout | default(pve_kvm_global_timeout) | default(omit) }}"
     vmid: "{{ vmid }}"
     state: started
- 
