@@ -55,44 +55,47 @@ git clone https://github.com/dginhoux/ansible_role.pve dginhoux.pve_kvm
 #### EXAMPLE PLAYBOOK CREATE ONLY ONE (vm1) KVM INSTANCE
 
 ```yaml
-- hosts: localhost
+- name: Playbook
+  hosts: localhost
   connection: local
-  roles:
+  tasks:
     - name: Create pve kvm
+      vars:
+        pve_kvm_limit_list:
+          - vm1
+        pve_kvm_force_action: create
       ansible.builtin.include_role:
         name: dginhoux.pve_pve
-  vars:
-    pve_kvm_limit_list:
-      - vm1
-    pve_kvm_force_action: create
 ```
 
 #### EXAMPLE PLAYBOOK POWERON ALL KVM INSTANCES
 
 ```yaml
-- hosts: localhost
+- name: Playbook
+  hosts: localhost
   connection: local
-  roles:
+  tasks:
     - name: Create pve kvm
+      vars:
+        pve_kvm_force_action: poweron
       ansible.builtin.include_role:
         name: dginhoux.pve_pve
-  vars:
-    pve_kvm_force_action: poweron
 ```
 
 #### EXAMPLE PLAYBOOK UPDATE ONLY ONE (vm2) KVM INSTANCE
 
 ```yaml
-- hosts: localhost
+- name: Playbook
+  hosts: localhost
   connection: local
-  roles:
+  tasks:
     - name: Create pve kvm
+      vars:
+        pve_kvm_limit_list:
+          - vm2
+        pve_kvm_force_action: update
       ansible.builtin.include_role:
         name: dginhoux.pve_pve
-  vars:
-    pve_kvm_limit_list:
-      - vm2
-    pve_kvm_force_action: update
 ```
 
 
@@ -101,7 +104,13 @@ git clone https://github.com/dginhoux/ansible_role.pve dginhoux.pve_kvm
 
 #### DEFAULT VARIABLES
 
-Default variables defined in `defaults/main.yml` : READ THIS FILE
+Default variables defined in `defaults/main.yml`
+
+
+#### EXAMPLES VARIABLES
+
+Read `defaults/main.yml`
+
 
 
 
